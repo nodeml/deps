@@ -15,8 +15,15 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [windows-latest,ubuntu-latest]
         python-version: ["3.9"]
+        include:
+          - os: ubuntu-latest
+            platform_short: linux
+            platform_long: Linux
+          - os: windows-latest
+            platform_short: win
+            platform_long: Windows
 
     steps:
       - uses: actions/checkout@v4
@@ -39,8 +46,9 @@ jobs:
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "opencv-win-${{inputs.version}}"
-          title: "OpenCV ${{inputs.version}} Windows"
+          automatic_release_tag: "opencv-${{ matrix.platform_short }}-${{inputs.version}}"
+          prerelease: false
+          title: "OpenCV ${{inputs.version}} ${{ matrix.platform_long }}"
           files: |
             built.zip
         
