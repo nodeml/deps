@@ -1,10 +1,14 @@
-name: Build OpenCV
+name: Build Torch
 
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: "The opencv version to build"
+      torch_version:
+        description: "The torch version to build"
+        required: true
+        type: string
+      torchvision_version:
+        description: "The torchvision version to build"
         required: true
         type: string
 
@@ -32,18 +36,19 @@ jobs:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
       - run: conda install -c conda-forge libjpeg-turbo libpng openjpeg
-      - run: mkdir cloned
-      - run: git clone --depth 1 --branch ${{ inputs.version }} https://github.com/opencv/opencv ./cloned
+      - run: conda install -c "nvidia/label/cuda-11.8.0" cuda-toolkit
+      - run: git clone --depth 1 --branch ${{ inputs.version }} https://github.com/opencv/opencv
       - run: mkdir build
-      - run: mkdir opencv
-      - run: cmake -DCMAKE_BUILD_TYPE=Release -S "./cloned/" -B "./build/"
+      - run: mkdir built
+      - run: mkdir built/opencv
+      - run: cmake -DCMAKE_BUILD_TYPE=Release -S "./opencv/" -B "./build/"
       - run: cmake --build "./build" --config Release
-      - run: cmake --install "./build" --prefix "./opencv"
+      - run: cmake --install "./build" --prefix "./built/opencv"
       - uses: thedoctor0/zip-release@0.7.1
         with:
           type: 'zip'
-          filename: 'opencv.zip'
-          path: 'opencv'
+          filename: 'built.zip'
+          path: 'built/*'
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
@@ -51,5 +56,5 @@ jobs:
           prerelease: false
           title: "OpenCV ${{inputs.version}} ${{ matrix.platform_long }}"
           files: |
-            opencv.zip
+            built.zip
         
