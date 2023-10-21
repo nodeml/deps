@@ -35,14 +35,15 @@ jobs:
       - run: git clone --depth 1 --branch ${{ inputs.version }} https://github.com/opencv/opencv
       - run: mkdir build
       - run: mkdir built
+      - run: mkdir built/opencv
       - run: cmake -DCMAKE_BUILD_TYPE=Release -S "./opencv/" -B "./build/"
       - run: cmake --build "./build" --config Release
-      - run: cmake --install "./build" --prefix "./built"
+      - run: cmake --install "./build" --prefix "./built/opencv"
       - uses: thedoctor0/zip-release@0.7.1
         with:
           type: 'zip'
           filename: 'built.zip'
-          path: 'built'
+          path: 'built/*'
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
