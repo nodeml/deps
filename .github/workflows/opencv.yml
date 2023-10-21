@@ -29,7 +29,7 @@ jobs:
       - run: mkdir built
       - run: cmake -DCMAKE_BUILD_TYPE=Release -S "./opencv/" -B "./build/"
       - run: cmake --build "./build" --config Release
-      - run: cmake --install "./build" --prefix "./out/opencv"
+      - run: cmake --install "./build" --prefix "./built"
       - uses: thedoctor0/zip-release@0.7.1
         with:
           type: 'zip'
