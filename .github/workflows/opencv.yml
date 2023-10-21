@@ -9,7 +9,7 @@ on:
         type: string
 
 jobs:
-  build_binaries:
+  build:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -19,18 +19,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      # Setup .npmrc file to publish to npm
       - uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
-      - run: conda install -c conda-forge libjpeg-turbo
-      - run: conda install -c conda-forge libpng
+      - run: conda install -c conda-forge libjpeg-turbo libpng openjpeg
       - run: git clone --depth 1 --branch ${{ inputs.version }} https://github.com/opencv/opencv
       - run: mkdir build
-      - run: mkdir out
+      - run: mkdir built
       - run: cmake -DCMAKE_BUILD_TYPE=Release -S "./opencv/" -B "./build/"
       - run: cmake --build "./build" --config Release
-      - run: cmake --install "./build" --prefix "./out"
-      - run: ls ./out
+      - run: cmake --install "./build" --prefix "./out/opencv"
+      - uses: thedoctor0/zip-release@0.7.1
+        with:
+          type: 'zip'
+          filename: 'built.zip'
+          path: 'built'
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "opencv-win-${{inputs.version}}"
+          title: "OpenCV ${{inputs.version}} Windows"
+          files: |
+            built.zip
         
