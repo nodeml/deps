@@ -14,7 +14,7 @@ jobs:
     permissions: write-all
     runs-on: ${{ matrix.os }}
     env:
-      working-dir: ./opencv
+      working-dir: opencv
 
 
     strategy:
@@ -39,7 +39,7 @@ jobs:
       - run: cd ${{ env.working-dir }}
       - run: mkdir build
       - run: cmake .. -DOPENCV_VERSION=${{ inputs.version }}
-        working-directory: ${{ env.working-dir }}/build
+        working-directory: ${{ env.working-dir }}\build
       - uses: thedoctor0/zip-release@0.7.1
         with:
           type: 'zip'
