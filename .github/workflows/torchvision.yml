@@ -17,10 +17,10 @@ on:
         description: "Cuda Enabled ?"
         required: true
         type: choice
-        default: OFF
+        default: "OFF"
         options:
-        - ON
-        - OFF
+        - "ON"
+        - "OFF"
 
 
 jobs:
@@ -29,7 +29,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       working-dir: torchvision
-      cuda_on: ON
+      cuda_on: "ON"
 
     strategy:
       matrix:
