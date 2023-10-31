@@ -4,17 +4,20 @@ on:
   workflow_dispatch:
     inputs:
       torch_version:
-        description: "The torch version to build"
+        description: "The Torch version to build"
         required: true
         type: string
+        default: "2.1.0"
       torchvision_version:
-        description: "The torchvision version to build"
+        description: "The TorchVision version to build"
         required: true
         type: string
+        default: "0.16.0"
       cuda:
         description: "Cuda Enabled ?"
         required: true
         type: choice
+        default: OFF
         options:
         - ON
         - OFF
