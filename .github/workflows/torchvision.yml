@@ -56,8 +56,8 @@ jobs:
         if: ${{ inputs.cuda == env.cuda_on }}
         run: conda install -c "nvidia/label/cuda-11.8.0" cuda-toolkit
 
-      - run: cd ${{ env.working-dir }}
       - run: mkdir build
+        working-directory: ${{ env.working-dir }}
       - run: cmake .. -DPYTORCH_VERSION=${{ inputs.torch_version }} -DPYTORCH_VISION_VERSION=${{ inputs.torchvision_version }} -DWITH_CUDA=${{ inputs.cuda }}
         working-directory: ${{ env.working-dir }}/build
       - uses: thedoctor0/zip-release@0.7.1
