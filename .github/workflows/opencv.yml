@@ -38,8 +38,8 @@ jobs:
       - run: conda install -c conda-forge libjpeg-turbo libpng openjpeg
       - run: cd ${{ env.working-dir }}
       - run: mkdir build
-      - run: cd build
       - run: cmake .. -DOPENCV_VERSION=${{ inputs.version }}
+        working-directory: ${{ env.working-dir }}/build
       - uses: thedoctor0/zip-release@0.7.1
         with:
           type: 'zip'
