@@ -1,0 +1,89 @@
+name: Build TorchVision
+
+on:
+  workflow_dispatch:
+    inputs:
+      torch_version:
+        description: "The torch version to build"
+        required: true
+        type: string
+      torchvision_version:
+        description: "The torchvision version to build"
+        required: true
+        type: string
+      cuda:
+        description: "Cuda Enabled ?"
+        required: true
+        type: choice
+        options:
+        - ON
+        - OFF
+
+
+jobs:
+  build:
+    permissions: write-all
+    runs-on: ${{ matrix.os }}
+    env:
+      working-dir: ./torchvision
+      cuda_on: ON
+
+    strategy:
+      matrix:
+        os: [windows-latest,ubuntu-latest]
+        python-version: ["3.9"]
+        include:
+          - os: ubuntu-latest
+            platform_short: linux
+            platform_long: Linux
+          - os: windows-latest
+            platform_short: win
+            platform_long: Windows
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+
+      - run: conda install -c conda-forge libjpeg-turbo libpng openjpeg
+
+      - name: Install Cuda 11.8
+        if: ${{ inputs.cuda == env.cuda_on }}
+        run: conda install -c "nvidia/label/cuda-11.8.0" cuda-toolkit
+
+      - run: cd ${{ env.working-dir }}
+      - run: mkdir build
+      - run: cd build
+      - run: cmake .. -DPYTORCH_VERSION=${{ inputs.torch_version }} -DPYTORCH_VISION_VERSION=${{ inputs.torchvision_version }} -DWITH_CUDA=${{ inputs.cuda }}
+      - uses: thedoctor0/zip-release@0.7.1
+        with:
+          type: 'zip'
+          filename: 'torchvision.zip'
+          path: 'torchvision/*'
+          working-directory: ${{ env.working-dir }}
+      - name: Cuda Release
+        if: ${{ inputs.cuda == env.cuda_on }}
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "torchvision-${{ matrix.platform_short }}-${{ inputs.torch_version }}-${{ inputs.torchvision_version }}-cuda"
+          prerelease: false
+          title: "TorchVision ${{ inputs.torch_version }} ${{ inputs.torchvision_version }} Cuda ${{ matrix.platform_long }}"
+          files: |
+            torchvision.zip
+          working-directory: ${{ env.working-dir }}
+
+      - name: Cpu Release
+        if: ${{ inputs.cuda != env.cuda_on }}
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "torchvision-${{ matrix.platform_short }}-${{ inputs.torch_version }}-${{ inputs.torchvision_version }}-cpu"
+          prerelease: false
+          title: "TorchVision ${{ inputs.torch_version }} ${{ inputs.torchvision_version }} Cpu ${{ matrix.platform_long }}"
+          files: |
+            torchvision.zip
+          working-directory: ${{ env.working-dir }}
+        

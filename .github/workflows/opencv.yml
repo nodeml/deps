@@ -1,0 +1,57 @@
+name: Build OpenCV
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "The opencv version to build"
+        required: true
+        type: string
+
+jobs:
+  build:
+    permissions: write-all
+    runs-on: ${{ matrix.os }}
+    env:
+      working-dir: ./opencv
+
+
+    strategy:
+      matrix:
+        os: [windows-latest,ubuntu-latest]
+        python-version: ["3.9"]
+        include:
+          - os: ubuntu-latest
+            platform_short: linux
+            platform_long: Linux
+          - os: windows-latest
+            platform_short: win
+            platform_long: Windows
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+      - run: conda install -c conda-forge libjpeg-turbo libpng openjpeg
+      - run: cd ${{ env.working-dir }}
+      - run: mkdir build
+      - run: cd build
+      - run: cmake .. -DOPENCV_VERSION=${{ inputs.version }}
+      - uses: thedoctor0/zip-release@0.7.1
+        with:
+          type: 'zip'
+          filename: 'opencv.zip'
+          path: 'opencv/*'
+          working-directory: ${{ env.working-dir }}
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "opencv-${{ matrix.platform_short }}-${{inputs.version}}"
+          prerelease: false
+          title: "OpenCV ${{inputs.version}} ${{ matrix.platform_long }}"
+          files: |
+            opencv.zip
+          working-directory: ${{ env.working-dir }}
+        
