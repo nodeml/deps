@@ -68,7 +68,7 @@ jobs:
           type: 'zip'
           filename: 'torchvision.zip'
           path: 'torchvision/*'
-          working-directory: ${{ env.working-dir }}
+          directory: ${{ env.working-dir }}
       
       - run: ls torchvision
 
