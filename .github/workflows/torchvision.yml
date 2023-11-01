@@ -57,14 +57,21 @@ jobs:
         if: ${{ inputs.cuda == env.cuda_on }}
         run: conda install -c "nvidia/label/cuda-11.8.0" cuda-toolkit
 
+
       - run: cmake . -Bbuild -DPYTORCH_VERSION="${{ inputs.torch_version }}" -DPYTORCH_VISION_VERSION="${{ inputs.torchvision_version }}" -DWITH_CUDA=${{ inputs.cuda }}
         working-directory: ${{ env.working-dir }}
+
+      - run: ls torchvision
+
       - uses: thedoctor0/zip-release@0.7.1
         with:
           type: 'zip'
           filename: 'torchvision.zip'
           path: 'torchvision/*'
           working-directory: ${{ env.working-dir }}
+      
+      - run: ls torchvision
+
       - name: Cuda Release
         if: ${{ inputs.cuda == env.cuda_on }}
         uses: "marvinpinto/action-automatic-releases@latest"
@@ -88,4 +95,6 @@ jobs:
           files: |
             torchvision.zip
           working-directory: ${{ env.working-dir }}
+          
+      - run: ls torchvision
         
