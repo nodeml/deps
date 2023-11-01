@@ -31,6 +31,7 @@ execute_process(
   COMMAND git clone --depth 1 --branch v${PYTORCH_VISION_VERSION} https://github.com/pytorch/vision "${CMAKE_CURRENT_BINARY_DIR}/cloned/"
 )
 
+status(STATUS "TORCH DEPS DIR ${TORCH_DEPS_DIR}")
 execute_process(
   COMMAND ${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=Release -DUSE_PYTHON=OFF -DWITH_CUDA=${WITH_CUDA} -DWITH_PNG=ON -DWITH_JPEG=ON -DCMAKE_PREFIX_PATH=${TORCH_DEPS_DIR} -S "${CMAKE_CURRENT_BINARY_DIR}/cloned/" -B "${CMAKE_CURRENT_BINARY_DIR}/cloned/build/"
 )
