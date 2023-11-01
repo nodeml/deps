@@ -66,8 +66,8 @@ jobs:
       - uses: thedoctor0/zip-release@0.7.1
         with:
           type: 'zip'
-          filename: 'torchvision.zip'
-          path: 'torchvision/*'
+          filename: '${{ env.working-dir }}.zip'
+          path: '${{ env.working-dir }}/*'
           directory: ${{ env.working-dir }}
       
       - run: ls torchvision
@@ -81,20 +81,18 @@ jobs:
           prerelease: false
           title: "TorchVision ${{ inputs.torch_version }} ${{ inputs.torchvision_version }} Cuda ${{ matrix.platform_long }}"
           files: |
-            torchvision.zip
-          working-directory: ${{ env.working-dir }}
+            **/torchvision/torchvision.zip
 
       - name: Cpu Release
         if: ${{ inputs.cuda != env.cuda_on }}
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "torchvision-${{ matrix.platform_short }}-${{ inputs.torch_version }}-${{ inputs.torchvision_version }}-cpu"
+          automatic_release_tag: "${{ env.working-dir }}-${{ matrix.platform_short }}-${{ inputs.torch_version }}-${{ inputs.torchvision_version }}-cpu"
           prerelease: false
           title: "TorchVision ${{ inputs.torch_version }} ${{ inputs.torchvision_version }} Cpu ${{ matrix.platform_long }}"
           files: |
-            torchvision.zip
-          working-directory: ${{ env.working-dir }}
+            **/${{ env.working-dir }}/${{ env.working-dir }}.zip
           
       - run: ls torchvision
         
