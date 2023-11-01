@@ -19,8 +19,6 @@ list(APPEND CMAKE_PREFIX_PATH "${TORCH_DEPS_DIR}/share/cmake/Torch")
 
 DownloadTorch(${PYTORCH_VERSION} ${WITH_CUDA} "${CMAKE_SOURCE_DIR}/deps/")
 
-set(TORCH_DEPS_DIR ${CMAKE_SOURCE_DIR}/deps/libtorch)
-
 find_package(Torch REQUIRED)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
