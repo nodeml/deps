@@ -55,12 +55,13 @@ jobs:
 
       - name: Install Cuda 11.8
         if: ${{ inputs.cuda == env.cuda_on }}
-        run: |
-          conda install -c "nvidia/label/cuda-11.8.0" cuda-toolkit
-          conda install -c conda-forge cudnn
+        uses: Jimver/cuda-toolkit@v0.2.11
+        id: cuda-toolkit
+        with:
+          cuda: '11.8.0'
 
 
-      - run: cmake . -Bbuild -DPYTORCH_VERSION="${{ inputs.torch_version }}" -DPYTORCH_VISION_VERSION="${{ inputs.torchvision_version }}" -DWITH_CUDA=${{ inputs.cuda }}
+      - run: cmake . -Bbuild -DCUDA_PATH="${{steps.cuda-toolkit.outputs.CUDA_PATH}}" -DPYTORCH_VERSION="${{ inputs.torch_version }}" -DPYTORCH_VISION_VERSION="${{ inputs.torchvision_version }}" -DWITH_CUDA=${{ inputs.cuda }}
         working-directory: ${{ env.working-dir }}
 
       - run: ls torchvision
@@ -79,7 +80,7 @@ jobs:
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "torchvision-${{ matrix.platform_short }}-${{ inputs.torch_version }}-${{ inputs.torchvision_version }}-cuda"
+          automatic_release_tag: "${{ env.working-dir }}-${{ matrix.platform_short }}-${{ inputs.torch_version }}-${{ inputs.torchvision_version }}-cuda"
           prerelease: false
           title: "TorchVision ${{ inputs.torch_version }} ${{ inputs.torchvision_version }} Cuda ${{ matrix.platform_long }}"
           files: |
