@@ -55,7 +55,9 @@ jobs:
 
       - name: Install Cuda 11.8
         if: ${{ inputs.cuda == env.cuda_on }}
-        run: conda install -c "nvidia/label/cuda-11.8.0" cuda-toolkit
+        run: |
+          conda install -c "nvidia/label/cuda-11.8.0" cuda-toolkit
+          conda install -c conda-forge cudnn
 
 
       - run: cmake . -Bbuild -DPYTORCH_VERSION="${{ inputs.torch_version }}" -DPYTORCH_VISION_VERSION="${{ inputs.torchvision_version }}" -DWITH_CUDA=${{ inputs.cuda }}
