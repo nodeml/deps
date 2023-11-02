@@ -59,6 +59,8 @@ jobs:
         id: cuda-toolkit
         with:
           cuda: '11.8.0'
+          method: 'network'
+          sub-packages: '["nvcc", "cudart", "cublas", "cublas_dev", "thrust", "visual_studio_integration"]'
 
 
       - run: cmake . -Bbuild -DCUDA_PATH="${{steps.cuda-toolkit.outputs.CUDA_PATH}}" -DPYTORCH_VERSION="${{ inputs.torch_version }}" -DPYTORCH_VISION_VERSION="${{ inputs.torchvision_version }}" -DWITH_CUDA=${{ inputs.cuda }}
