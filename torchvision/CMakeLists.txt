@@ -4,9 +4,8 @@ include(${CMAKE_SOURCE_DIR}/utils.cmake)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
-
 find_package(PNG REQUIRED)
+
 find_package(JPEG REQUIRED)
 
 option(WITH_CUDA "Build with cuda?" OFF)
@@ -23,16 +22,15 @@ if(WITH_CUDA)
   
 endif()
 
+DownloadTorch(${PYTORCH_VERSION} ${WITH_CUDA} "${CMAKE_SOURCE_DIR}/deps/")
+
 set(TORCH_DEPS_DIR "${CMAKE_SOURCE_DIR}/deps/libtorch")
 list(APPEND CMAKE_PREFIX_PATH ${TORCH_DEPS_DIR})
 list(APPEND CMAKE_PREFIX_PATH "${TORCH_DEPS_DIR}/share/cmake/Torch")
 
-DownloadTorch(${PYTORCH_VERSION} ${WITH_CUDA} "${CMAKE_SOURCE_DIR}/deps/")
-
-message(STATUS "TORCH DEPS DIR ${TORCH_DEPS_DIR} ${CMAKE_SOURCE_DIR}")
-
 find_package(Torch REQUIRED)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS}")
 
 # Torchvision
 set(TORCH_VISION_DEPS_DIR ${CMAKE_SOURCE_DIR}/torchvision)
@@ -60,7 +58,7 @@ execute_process(
 
 if (MSVC)
   file(GLOB PACKAGE_DLLS  ${PNG_LIBRARIES}  ${JPEG_LIBRARIES})
-  file(COPY ${PACKAGE_DLLS} DESTINATION "${TORCH_VISION_DEPS_DIR}/bin")
+  file(COPY ${PACKAGE_DLLS} DESTINATION "${TORCH_VISION_DEPS_DIR}/bin")  
   # add_custom_command(TARGET ${PROJECT_NAME}
   #                    POST_BUILD
   #                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
