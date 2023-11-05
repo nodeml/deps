@@ -52,7 +52,7 @@ jobs:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
 
-      - run: conda install -c conda-forge libjpeg-turbo libpng openjpeg
+      - run: conda install -c conda-forge libjpeg libpng openjpeg
 
       - name: Install Cuda 11.8
         if: ${{ inputs.cuda == env.cuda_on }}
@@ -65,7 +65,9 @@ jobs:
 
       - name: Windows sdk
         if: ${{ matrix.platform_short == env.win_platform }}
-        uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.12
+        uses: fbactions/setup-winsdk@v1
+        with:
+          winsdk-build-version: 22000
 
       - run: cmake . -Bbuild -DCUDA_PATH="${{steps.cuda-toolkit.outputs.CUDA_PATH}}" -DPYTORCH_VERSION="${{ inputs.torch_version }}" -DPYTORCH_VISION_VERSION="${{ inputs.torchvision_version }}" -DWITH_CUDA=${{ inputs.cuda }} -DCMAKE_BUILD_TYPE=Release
         working-directory: ${{ env.working-dir }}

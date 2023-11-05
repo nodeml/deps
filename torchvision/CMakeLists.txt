@@ -4,15 +4,16 @@ include(${CMAKE_SOURCE_DIR}/utils.cmake)
 
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(PNG REQUIRED)
-
-find_package(JPEG REQUIRED)
-
 option(WITH_CUDA "Build with cuda?" OFF)
 
 set(PYTORCH_VERSION "2.1.0" CACHE STRING "Torch Version")
 
 set(PYTORCH_VISION_VERSION "0.16.0" CACHE STRING "Torchvision Version" )
+
+
+find_package(PNG REQUIRED)
+
+find_package(JPEG REQUIRED)
 
 if(WITH_CUDA)
 
@@ -43,7 +44,7 @@ execute_process(
 
 
 execute_process(
-  COMMAND ${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=Release -DUSE_PYTHON=OFF -DWITH_CUDA=${WITH_CUDA} -DWITH_PNG=ON -DWITH_JPEG=ON -DCMAKE_PREFIX_PATH=${TORCH_DEPS_DIR} -S "${CMAKE_CURRENT_BINARY_DIR}/cloned/" -B "${CMAKE_CURRENT_BINARY_DIR}/cloned/build/"
+  COMMAND ${CMAKE_COMMAND} -DCMAKE_BUILD_TYPE=Release -DUSE_PYTHON=OFF -DWITH_CUDA=${WITH_CUDA} -DWITH_PNG=ON -DWITH_JPEG=ON -DCMAKE_PREFIX_PATH=${TORCH_DEPS_DIR} -S "${CMAKE_CURRENT_BINARY_DIR}/cloned/" -B "${CMAKE_CURRENT_BINARY_DIR}/cloned/build/" --debug-output
 )
 
 execute_process(
