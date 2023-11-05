@@ -52,7 +52,7 @@ jobs:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
 
-      - run: conda install -c conda-forge libjpeg libpng openjpeg
+      - run: conda install -c conda-forge libpng openjpeg
 
       - name: Install Cuda 11.8
         if: ${{ inputs.cuda == env.cuda_on }}
